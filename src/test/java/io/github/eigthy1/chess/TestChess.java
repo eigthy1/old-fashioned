@@ -1,7 +1,6 @@
 package io.github.eigthy1.chess;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -12,8 +11,8 @@ public class TestChess {
 
     private Chess chess;
 
-    private void playChess(String... sans) {
-        for(String san : sans) chess.move(san);
+    private void play(String... moves) {
+        for(String san : moves) chess.move(san);
     }
 
     @BeforeEach
@@ -28,13 +27,13 @@ public class TestChess {
 
     @Test
     public void whiteMoves() {
-        playChess("e4");
+        play("e4");
         assertEquals(KINGS_PAWN_OPENING, chess.fen());
     }
 
     @Test
     public void blackMoves() {
-        playChess("e4", "c5");
+        play("e4", "c5");
         assertEquals(SICILIAN_DEFENSE, chess.fen());
     }
 }
