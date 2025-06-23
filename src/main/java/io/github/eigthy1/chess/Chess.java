@@ -97,7 +97,7 @@ public class Chess {
         Square square;
         try {
             square = new Square(getGame().peek());
-        } catch(EmptyStackException ignore) {
+        } catch(EmptyStackException | NullPointerException ignore) {
             return "-";
         }
         if(isWhiteTurn()) square.up();
@@ -135,7 +135,11 @@ public class Chess {
         setBoard(fields[0]);
         setWhiteTurn(fields[1].equals("w"));
         setCastlingAvailable(fields[2]);
-//        getGame().add(fields[3])
+        if(!fields[3].equals("-")) {
+            Square enPassant = new Square(fields[3]);
+            enPassant.up();
+            getGame().add(enPassant.id());
+        }
         setHalfmove(Integer.valueOf(fields[4]));
         setMoveNo(Integer.valueOf(fields[5]));
     }

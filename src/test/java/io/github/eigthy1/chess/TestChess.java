@@ -8,7 +8,7 @@ public class TestChess {
     public static final String STARTING_POSITION = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     public static final String KINGS_PAWN_OPENING = "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1";
     public static final String SICILIAN_DEFENSE = "rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq c6 0 2";
-    public static final String MARSHALLS_QUEEN_SACRIFICE = "5rk1/pp4pp/4p3/2R3Q1/3n4/6qr/P1P2PPP/5RK1 w - - 2 24";
+    public static final String TROUBLESOME_PRIEST = "r2r2k1/3b1pbp/2p3p1/ppq5/P1nNPP2/1BP4P/2Q3P1/2B1RR1K b - a3 0 22";
 
     private Chess chess;
 
@@ -40,7 +40,7 @@ public class TestChess {
 
     @Test
     public void restartGame() {
-        chess.load(MARSHALLS_QUEEN_SACRIFICE);
-        assertEquals(MARSHALLS_QUEEN_SACRIFICE, chess.fen());
+        chess.load(TROUBLESOME_PRIEST);
+        assertEquals(TROUBLESOME_PRIEST, chess.fen());
     }
 }
