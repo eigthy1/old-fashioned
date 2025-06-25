@@ -2,6 +2,11 @@ package io.github.eigthy1.chess;
 
 import java.util.*;
 
+import io.github.eigthy1.chess.board.Bishop;
+import io.github.eigthy1.chess.board.Pawn;
+import io.github.eigthy1.chess.board.Piece;
+import io.github.eigthy1.chess.board.Square;
+
 public class Chess {
     public static final int BOARD_SIZE = 8;
     public static final char EMPTY_SQUARE = ' ';
@@ -94,15 +99,8 @@ public class Chess {
     }
 
     private String enPassant() {
-        Square square;
-        try {
-            square = new Square(getGame().peek());
-        } catch(EmptyStackException | NullPointerException ignore) {
-            return "-";
-        }
-        if(isWhiteTurn()) square.up();
-        else square.down();
-        return square.id();
+        return !getGame().isEmpty() && getGame().peek().equals(getGame().peek().toLowerCase()) ?
+                new Square(getGame().peek().charAt(0)+(isWhiteTurn() ? "6" : "3")).id() : "-";
     }
 
     public String fen() {
@@ -117,14 +115,22 @@ public class Chess {
     }
 
     public void move(final String san) {
-        Square start = new Square(san);
-        for(int i = 2; i > 0; i--) {
-            if(isWhiteTurn()) start.down();
-            else start.up();
+        Playable piece;
+        Piece.Color color = isWhiteTurn() ? Piece.Color.WHITE : Piece.Color.BLACK;
+        Square origin, target;
+        if(san.equals(san.toLowerCase())) {
+            origin = new Square(san.charAt(0)+(isWhiteTurn() ? "2" : "7"));
+            piece = new Pawn(color, origin);
+            target = new Square(san);
+            board[target.getRank().getValue()][target.getFile().getValue()] = isWhiteTurn() ? 'P' : 'p';
+        } else {
+            origin = new Square("g4");
+            piece = new Bishop(color, origin);
+            target = new Square(san.substring(1));
+            board[target.getRank().getValue()][target.getFile().getValue()] = isWhiteTurn() ? 'B' : 'b';
         }
-        Square end = new Square(san);
-        board[start.getRank().getValue()][start.getFile().getValue()] = EMPTY_SQUARE;
-        board[end.getRank().getValue()][end.getFile().getValue()] = isWhiteTurn() ? 'P' : 'p';
+        piece.go(target);
+        board[origin.getRank().getValue()][origin.getFile().getValue()] = EMPTY_SQUARE;
         game.add(san);
         setWhiteTurn(!isWhiteTurn());
         if(isWhiteTurn()) setMoveNo(getMoveNo()+1);
@@ -136,9 +142,7 @@ public class Chess {
         setWhiteTurn(fields[1].equals("w"));
         setCastlingAvailable(fields[2]);
         if(!fields[3].equals("-")) {
-            Square enPassant = new Square(fields[3]);
-            enPassant.up();
-            getGame().add(enPassant.id());
+            getGame().add(fields[3].charAt(0)+(isWhiteTurn() ? "5" : "4"));
         }
         setHalfmove(Integer.valueOf(fields[4]));
         setMoveNo(Integer.valueOf(fields[5]));

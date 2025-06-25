@@ -1,4 +1,4 @@
-package io.github.eigthy1.chess;
+package io.github.eigthy1.chess.board;
 
 public class Square {
     private File file;
@@ -89,19 +89,7 @@ public class Square {
         return rank;
     }
 
-    void up() {
-        for(Rank rank : Rank.values())
-            if(rank.getValue() == getRank().getValue()+1) {
-                setRank(rank);
-                return;
-            }
-    }
-
-    void down() {
-        for(Rank rank : Rank.values())
-            if(rank.getValue() == getRank().getValue()-1) {
-                setRank(rank);
-                return;
-            }
+    public int diagonal(boolean asc) {
+        return getFile().getValue()+(asc ? -1 : 1)*getRank().getValue();
     }
 }
