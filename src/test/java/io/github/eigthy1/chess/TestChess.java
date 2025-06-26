@@ -30,14 +30,10 @@ public class TestChess {
     }
 
     @Test
-    public void whiteMoves() {
+    public void switchTurn() {
         play("e4");
         assertEquals(KINGS_PAWN_OPENING, chess.fen());
-    }
-
-    @Test
-    public void blackMoves() {
-        play("e4", "c5");
+        play("c5");
         assertEquals(SICILIAN_DEFENSE, chess.fen());
     }
 
