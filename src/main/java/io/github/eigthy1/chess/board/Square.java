@@ -71,6 +71,16 @@ public class Square {
         return Character.toString(getFile().getSymbol())+getRank().getSymbol();
     }
 
+    @Override
+    public int hashCode() {
+        return id().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return getClass() == obj.getClass() && obj.hashCode() == hashCode();
+    }
+
     private void setFile(File file) {
         if(file == null) throw new NullPointerException();
         this.file = file;
@@ -91,5 +101,13 @@ public class Square {
 
     public int diagonal(boolean asc) {
         return getFile().getValue()+(asc ? -1 : 1)*getRank().getValue();
+    }
+
+    public int fileDistance(Square ref) {
+        return Math.abs(getFile().getValue()-ref.getFile().getValue());
+    }
+
+    public int rankDistance(Square ref) {
+        return Math.abs(getRank().getValue()-ref.getRank().getValue());
     }
 }

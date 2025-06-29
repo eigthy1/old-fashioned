@@ -2,10 +2,7 @@ package io.github.eigthy1.chess;
 
 import java.util.*;
 
-import io.github.eigthy1.chess.board.Bishop;
-import io.github.eigthy1.chess.board.Pawn;
-import io.github.eigthy1.chess.board.Piece;
-import io.github.eigthy1.chess.board.Square;
+import io.github.eigthy1.chess.board.*;
 
 public class Chess {
     public static final int BOARD_SIZE = 8;
@@ -13,7 +10,7 @@ public class Chess {
     public static final String STARTING_POSITION = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
     private final Character[][] board;
-    private boolean whiteTurn;
+    private Boolean whiteTurn;
     private String castlingAvailable;
     private Integer halfmove;
     private Integer moveNo;
@@ -62,11 +59,11 @@ public class Chess {
         return notation.toString();
     }
 
-    public void setWhiteTurn(boolean whiteTurn) {
+    public void setWhiteTurn(Boolean whiteTurn) {
         this.whiteTurn = whiteTurn;
     }
 
-    public boolean isWhiteTurn() {
+    public Boolean isWhiteTurn() {
         return whiteTurn;
     }
 

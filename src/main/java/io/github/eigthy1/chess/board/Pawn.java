@@ -7,20 +7,13 @@ public class Pawn extends Piece {
 
     @Override
     public void go(Square target) {
-        Square origin = getSquare();
-        if(getColor() == Color.WHITE) {
-            if(target.getFile() == origin.getFile()) {
-                int d = target.getRank().getValue()-origin.getRank().getValue();
-                if(d != 1 && (d != 2 && origin.getRank().getSymbol() == '2'))
-                    throw new IllegalArgumentException();
-            }
-        } else {
-            if(target.getFile() == origin.getFile()) {
-                int d = origin.getRank().getValue()-target.getRank().getValue();
-                if(d != 1 && (d != 2 && origin.getRank().getSymbol() == '7'))
-                    throw new IllegalArgumentException();
-            }
-        }
+        if(target.fileDistance(getSquare()) > 0)
+            throw new IllegalArgumentException();
+        int d = getColor() == Color.WHITE ?
+                target.getRank().getValue()-getSquare().getRank().getValue() :
+                getSquare().getRank().getValue()-target.getRank().getValue();
+        if(d != 1 && (d != 2 || getSquare().getRank().getSymbol() != (getColor() == Color.WHITE ? '2' : '7')))
+            throw new IllegalArgumentException();
         setSquare(target);
     }
 }
