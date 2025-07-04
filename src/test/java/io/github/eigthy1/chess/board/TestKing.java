@@ -1,29 +1,26 @@
 package io.github.eigthy1.chess.board;
 
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.stream.*;
 
 import org.junit.jupiter.api.BeforeEach;
 
-import static io.github.eigthy1.chess.util.TestUtils.buildSquares;
+import io.github.eigthy1.chess.util.Squares;
 
 public class TestKing extends TestPiece {
     @BeforeEach
     @Override
     public void setUp() {
-        piece = new King(Piece.Color.BLACK, new Square(ORIGIN_SQUARE));
+        setPiece(new King(Piece.Color.BLACK));
     }
 
-    @SuppressWarnings("unused")
-    static Stream<Square> reachableSquares() {
-        return buildSquares("b5 b6 b7 c5 c7 d5 d6 d7");
+    public static Stream<Square> reachable() {
+        return Squares.bulkBuild("b5 b6 b7 c5 c7 d5 d6 d7".split(" "));
     }
 
-    @SuppressWarnings("unused")
-    static Stream<Square> unreachableSquares() {
-        Set<Square> squares = TestQueen.reachableSquares().collect(Collectors.toSet());
-        squares.removeAll(reachableSquares().collect(Collectors.toSet()));
+    public static Stream<Square> unreachable() {
+        Set<Square> squares = TestQueen.reachable().collect(Collectors.toSet());
+        squares.removeAll(reachable().collect(Collectors.toSet()));
         return squares.stream();
     }
 }

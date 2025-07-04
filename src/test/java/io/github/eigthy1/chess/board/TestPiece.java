@@ -1,5 +1,6 @@
 package io.github.eigthy1.chess.board;
 
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.params.ParameterizedTest;
@@ -8,7 +9,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class TestPiece {
-    public static final String ORIGIN_SQUARE = "c6";
+    public static final String ORIGIN = "c6";
 
     Piece piece;
 
@@ -16,23 +17,30 @@ public abstract class TestPiece {
     public abstract void setUp();
 
     @ParameterizedTest
-    @MethodSource("reachableSquares")
-    public void legalMove(Square square) {
-        piece.go(square);
-        assertSame(square, piece.getSquare());
+    @MethodSource("reachable")
+    public void legalMove(Square target) {
+        assertTrue(getPiece().go(new Square(ORIGIN), target));
     }
 
     @ParameterizedTest
-    @MethodSource("unreachableSquares")
-    public void illegalMove(Square square) {
-        assertThrows(IllegalArgumentException.class, () -> piece.go(square));
+    @MethodSource("unreachable")
+    public void illegalMove(Square target) {
+        assertFalse(getPiece().go(new Square(ORIGIN), target));
     }
 
-    static Stream<Square> reachableSquares() {
+    public static Stream<Square> reachable() {
         throw new UnsupportedOperationException();
     }
 
-    static Stream<Square> unreachableSquares() {
+    public static Stream<Square> unreachable() {
         throw new UnsupportedOperationException();
+    }
+
+    void setPiece(Piece piece) {
+        this.piece = Objects.requireNonNull(piece);
+    }
+
+    private Piece getPiece() {
+        return piece;
     }
 }

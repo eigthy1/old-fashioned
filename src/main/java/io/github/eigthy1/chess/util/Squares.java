@@ -5,8 +5,8 @@ import java.util.stream.Stream;
 
 import io.github.eigthy1.chess.board.Square;
 
-public class TestUtils {
-    public static Stream<Square> buildSquares(String list) {
-        return Arrays.stream(list.split(" ")).map(Square::new);
+public class Squares {
+    public static Stream<Square> bulkBuild(String[] elements) {
+        return Arrays.stream(elements).map(Square::new);
     }
 }

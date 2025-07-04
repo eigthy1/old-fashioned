@@ -3,64 +3,79 @@ package io.github.eigthy1.chess;
 import java.util.*;
 
 import io.github.eigthy1.chess.board.*;
+import io.github.eigthy1.chess.board.Piece.*;
+import io.github.eigthy1.chess.board.Square.*;
+import io.github.eigthy1.chess.util.Lexer;
 
 public class Chess {
-    public static final int BOARD_SIZE = 8;
-    public static final char EMPTY_SQUARE = ' ';
     public static final String STARTING_POSITION = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    public static final String FEN_EMPTY_FIELD = "-";
 
-    private final Character[][] board;
+    private Map<Square, Piece> board;
     private Boolean whiteTurn;
     private String castlingAvailable;
-    private Integer halfmove;
-    private Integer moveNo;
+    private Integer halfmoveClock;
+    private Integer fullmoveCounter;
     private final Stack<String> game = new Stack<>();
 
     public Chess() {
-        board = new Character[BOARD_SIZE][BOARD_SIZE];
         load(STARTING_POSITION);
     }
 
-    private void setBoard(String board) {
-        String[] ranks = board.split("/");
-        for(int i = 0; i < BOARD_SIZE; i++) {
-            Stack<String> rank = new Stack<>();
-            rank.addAll(Arrays.asList(ranks[BOARD_SIZE-i-1].split("")));
-            Collections.reverse(rank);
-            int j = 0;
-            while(!rank.isEmpty()) {
-                Character square = rank.pop().charAt(0);
-                if(Character.isDigit(square)) {
-                    square--;
-                    if(!square.equals('0')) rank.add(square.toString());
-                    this.board[i][j] = EMPTY_SQUARE;
-                } else this.board[i][j] = square;
-                j++;
+    private void setBoard(String board) throws ReflectiveOperationException {
+        this.board = new HashMap<>();
+        char rank = Rank.$8.getSymbol();
+        for(String line : board.split("/")) {
+            char file = File.$A.getSymbol();
+            for(Character c : line.toCharArray()) {
+                if(Character.isDigit(c)) file += (char) (Character.getNumericValue(c)-1);
+                else {
+                    this.board.put(
+                            new Square(String.valueOf(file).concat(String.valueOf(rank))),
+                            Arrays.stream(Type.values()).filter(type -> {
+                                try {
+                                    Character symbol = (Character) type.getClazz().getMethod("symbol").invoke(null);
+                                    return symbol.toString().equalsIgnoreCase(c.toString());
+                                } catch(ReflectiveOperationException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            }).findFirst().orElseThrow().getClazz().getConstructor(Piece.Color.class).newInstance(
+                                    Character.isUpperCase(c) ? Piece.Color.WHITE : Piece.Color.BLACK
+                            )
+                    );
+                }
+                file++;
             }
+            rank--;
         }
     }
 
     private String getBoard() {
-        StringBuilder notation = new StringBuilder();
-        for(int i = BOARD_SIZE-1; i >= 0; i--) {
+        StringBuilder board = new StringBuilder();
+        for(char rank = Rank.$8.getSymbol(); rank >= Rank.$1.getSymbol(); rank--) {
             int empties = 0;
-            for(Character square : board[i]) {
-                if(square.equals(EMPTY_SQUARE)) empties++;
+            for(char file = File.$A.getSymbol(); file <= File.$H.getSymbol(); file++) {
+                Piece piece = this.board.get(new Square(String.valueOf(file).concat(String.valueOf(rank))));
+                if(piece == null) empties++;
                 else {
-                    if(empties > 0) notation.append(empties);
-                    notation.append(square);
+                    if(empties > 0) board.append(empties);
+                    try {
+                        board.append(piece.getSymbol());
+                    } catch(ReflectiveOperationException e) {
+                        throw new RuntimeException(e);
+                    }
                     empties = 0;
                 }
             }
-            if(empties > 0) notation.append(empties);
-            notation.append('/');
+            if(empties > 0) board.append(empties);
+            board.append('/');
         }
-        notation.deleteCharAt(notation.length()-1);
-        return notation.toString();
+        board.deleteCharAt(board.length()-1);
+        return board.toString();
     }
 
     public void setWhiteTurn(Boolean whiteTurn) {
-        this.whiteTurn = whiteTurn;
+        this.whiteTurn = Objects.requireNonNull(whiteTurn);
     }
 
     public Boolean isWhiteTurn() {
@@ -68,27 +83,27 @@ public class Chess {
     }
 
     public void setCastlingAvailable(String castlingAvailable) {
-        this.castlingAvailable = castlingAvailable;
+        this.castlingAvailable = Objects.requireNonNull(castlingAvailable);
     }
 
     public String isCastlingAvailable() {
         return castlingAvailable;
     }
 
-    public void setHalfmove(Integer halfmove) {
-        this.halfmove = halfmove;
+    public void setHalfmoveClock(Integer halfmoveClock) {
+        this.halfmoveClock = Objects.requireNonNull(halfmoveClock);
     }
 
-    public Integer getHalfmove() {
-        return halfmove;
+    public Integer getHalfmoveClock() {
+        return halfmoveClock;
     }
 
-    public void setMoveNo(Integer moveNo) {
-        this.moveNo = moveNo;
+    public void setFullmoveCounter(Integer fullmoveCounter) {
+        this.fullmoveCounter = Objects.requireNonNull(fullmoveCounter);
     }
 
-    public Integer getMoveNo() {
-        return moveNo;
+    public Integer getFullmoveCounter() {
+        return fullmoveCounter;
     }
 
     private Stack<String> getGame() {
@@ -96,52 +111,60 @@ public class Chess {
     }
 
     private String enPassant() {
-        return !getGame().isEmpty() && getGame().peek().equals(getGame().peek().toLowerCase()) ?
-                new Square(getGame().peek().charAt(0)+(isWhiteTurn() ? "6" : "3")).id() : "-";
+        if(getGame().isEmpty() || !Lexer.isPawnMove(getGame().peek())) return FEN_EMPTY_FIELD;
+        return getGame().peek().substring(0, 1).concat((isWhiteTurn() ? Rank.$6 : Rank.$3).getSymbol().toString());
     }
 
     public String fen() {
-        return String.join(" ", new String[] {
+        return String.join(" ",
                 getBoard(),
                 isWhiteTurn() ? "w" : "b",
                 isCastlingAvailable(),
                 enPassant(),
-                getHalfmove().toString(),
-                getMoveNo().toString()
-        });
+                getHalfmoveClock().toString(),
+                getFullmoveCounter().toString()
+        );
     }
 
-    public void move(final String san) {
-        Playable piece;
-        Piece.Color color = isWhiteTurn() ? Piece.Color.WHITE : Piece.Color.BLACK;
-        Square origin, target;
-        if(san.equals(san.toLowerCase())) {
-            origin = new Square(san.charAt(0)+(isWhiteTurn() ? "2" : "7"));
-            piece = new Pawn(color, origin);
-            target = new Square(san);
-            board[target.getRank().getValue()][target.getFile().getValue()] = isWhiteTurn() ? 'P' : 'p';
-        } else {
-            origin = new Square("g4");
-            piece = new Bishop(color, origin);
-            target = new Square(san.substring(1));
-            board[target.getRank().getValue()][target.getFile().getValue()] = isWhiteTurn() ? 'B' : 'b';
+    void play(String... moves) {
+        for(String move : moves) play(move);
+    }
+
+    public void play(String move) {
+        List<String> lexemes = Lexer.tokenize(move);
+        Piece piece;
+        Square from = null, to = new Square(lexemes.get(lexemes.size()-1));
+        for(Map.Entry<Square, Piece> entry : board.entrySet()) {
+            from = entry.getKey();
+            piece = entry.getValue();
+            if(!piece.getColor().equals(isWhiteTurn() ? Color.WHITE : Color.BLACK)) continue;
+            try {
+                String type = piece.getSymbol().toString().toUpperCase();
+                if(!type.equals(Lexer.isPawnMove(move) ? Pawn.symbol().toString() : lexemes.get(0))) continue;
+            } catch(ReflectiveOperationException e) {
+                throw new RuntimeException(e);
+            }
+            if(!piece.go(from, to)) continue;
+            break;
         }
-        piece.go(target);
-        board[origin.getRank().getValue()][origin.getFile().getValue()] = EMPTY_SQUARE;
-        game.add(san);
+        board.put(to, board.remove(from));
+        getGame().add(move);
         setWhiteTurn(!isWhiteTurn());
-        if(isWhiteTurn()) setMoveNo(getMoveNo()+1);
+        if(isWhiteTurn()) setFullmoveCounter(getFullmoveCounter()+1);
     }
 
     public void load(String fen) {
         String[] fields = fen.split(" ");
-        setBoard(fields[0]);
+        try {
+            setBoard(fields[0]);
+        } catch(ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+        }
         setWhiteTurn(fields[1].equals("w"));
         setCastlingAvailable(fields[2]);
-        if(!fields[3].equals("-")) {
-            getGame().add(fields[3].charAt(0)+(isWhiteTurn() ? "5" : "4"));
-        }
-        setHalfmove(Integer.valueOf(fields[4]));
-        setMoveNo(Integer.valueOf(fields[5]));
+        if(!fields[3].equals(FEN_EMPTY_FIELD))
+            getGame().add(fields[3].substring(0, 1).concat((isWhiteTurn() ? Rank.$5 : Rank.$4).getSymbol().toString()));
+        setHalfmoveClock(Integer.valueOf(fields[4]));
+        setFullmoveCounter(Integer.valueOf(fields[5]));
     }
 }

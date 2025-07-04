@@ -1,14 +1,17 @@
 package io.github.eigthy1.chess.board;
 
 public class Bishop extends Piece {
-    public Bishop(Color color, Square square) {
-        super(color, square);
+    public Bishop(Color color) {
+        super(Type.BISHOP, color);
+    }
+
+    @SuppressWarnings("unused")
+    public static Character symbol() {
+        return 'B';
     }
 
     @Override
-    public void go(Square target) {
-        if(target.diagonal(true) != getSquare().diagonal(true) && target.diagonal(false) != getSquare().diagonal(false))
-            throw new IllegalArgumentException();
-        setSquare(target);
+    public boolean go(Square from, Square to) {
+        return to.diagonal(true) == from.diagonal(true) || to.diagonal(false) == from.diagonal(false);
     }
 }

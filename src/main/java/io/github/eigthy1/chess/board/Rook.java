@@ -1,14 +1,17 @@
 package io.github.eigthy1.chess.board;
 
 public class Rook extends Piece {
-    public Rook(Color color, Square square) {
-        super(color, square);
+    public Rook(Color color) {
+        super(Type.ROOK, color);
+    }
+
+    @SuppressWarnings("unused")
+    public static Character symbol() {
+        return 'R';
     }
 
     @Override
-    public void go(Square target) {
-        if(target.getFile() != getSquare().getFile() && target.getRank() != getSquare().getRank())
-            throw new IllegalArgumentException();
-        setSquare(target);
+    public boolean go(Square from, Square to) {
+        return to.getFile().equals(from.getFile()) || to.getRank().equals(from.getRank());
     }
 }

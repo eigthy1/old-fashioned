@@ -1,74 +1,61 @@
 package io.github.eigthy1.chess.board;
 
+import java.util.*;
+
 public class Square {
-    private File file;
-    private Rank rank;
+    private final File file;
+    private final Rank rank;
 
     public enum File {
-        A(0, 'a'),
-        B(1, 'b'),
-        C(2, 'c'),
-        D(3, 'd'),
-        E(4, 'e'),
-        F(5, 'f'),
-        G(6, 'g'),
-        H(7, 'h');
+        $A('a'), $B('b'), $C('c'), $D('d'), $E('e'), $F('f'), $G('g'), $H('h');
 
-        private final int value;
-        private final char symbol;
+        private final Character symbol;
 
-        File(int value, char symbol) {
-            this.value = value;
-            this.symbol = symbol;
+        File(Character symbol) {
+            this.symbol = Objects.requireNonNull(symbol);
         }
 
-        public int getValue() {
-            return value;
-        }
-
-        public char getSymbol() {
+        public Character getSymbol() {
             return symbol;
         }
     }
 
     public enum Rank {
-        $1(0, '1'),
-        $2(1, '2'),
-        $3(2, '3'),
-        $4(3, '4'),
-        $5(4, '5'),
-        $6(5, '6'),
-        $7(6, '7'),
-        $8(7, '8');
+        $1('1'), $2('2'), $3('3'), $4('4'), $5('5'), $6('6'), $7('7'), $8('8');
 
-        private final int value;
-        private final char symbol;
+        private final Character symbol;
 
-        Rank(int value, char symbol) {
-            this.value = value;
-            this.symbol = symbol;
+        Rank(Character symbol) {
+            this.symbol = Objects.requireNonNull(symbol);
         }
 
-        public int getValue() {
-            return value;
-        }
-
-        public char getSymbol() {
+        public Character getSymbol() {
             return symbol;
         }
     }
 
     public Square(String id) {
-        for(File file : File.values())
-            if(file.getSymbol() == id.charAt(0)) setFile(file);
-        setFile(getFile());
-        for(Rank rank : Rank.values())
-            if(rank.getSymbol() == id.charAt(1)) setRank(rank);
-        setRank(getRank());
+        this(
+                Arrays.stream(File.values()).filter(f -> f.getSymbol().equals(id.charAt(0))).findFirst().orElse(null),
+                Arrays.stream(Rank.values()).filter(r -> r.getSymbol().equals(id.charAt(1))).findFirst().orElse(null)
+        );
+    }
+
+    private Square(File file, Rank rank) {
+        this.file = Objects.requireNonNull(file);
+        this.rank = Objects.requireNonNull(rank);
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public Rank getRank() {
+        return rank;
     }
 
     public String id() {
-        return Character.toString(getFile().getSymbol())+getRank().getSymbol();
+        return getFile().getSymbol().toString().concat(getRank().getSymbol().toString());
     }
 
     @Override
@@ -81,33 +68,20 @@ public class Square {
         return getClass() == obj.getClass() && obj.hashCode() == hashCode();
     }
 
-    private void setFile(File file) {
-        if(file == null) throw new NullPointerException();
-        this.file = file;
-    }
-
-    public File getFile() {
-        return file;
-    }
-
-    private void setRank(Rank rank) {
-        if(rank == null) throw new NullPointerException();
-        this.rank = rank;
-    }
-
-    public Rank getRank() {
-        return rank;
-    }
-
     public int diagonal(boolean asc) {
-        return getFile().getValue()+(asc ? -1 : 1)*getRank().getValue();
+        Square origin = new Square(File.$A, Rank.$1);
+        return fileDistance(origin, this)+(asc ? -1 : 1)*rankDistance(origin, this);
     }
 
-    public int fileDistance(Square ref) {
-        return Math.abs(getFile().getValue()-ref.getFile().getValue());
+    public static int chebyshevDistance(Square a, Square b) {
+        return Math.max(fileDistance(a, b), rankDistance(a, b));
     }
 
-    public int rankDistance(Square ref) {
-        return Math.abs(getRank().getValue()-ref.getRank().getValue());
+    public static int fileDistance(Square a, Square b) {
+        return Math.abs(b.getFile().getSymbol()-a.getFile().getSymbol());
+    }
+
+    public static int rankDistance(Square a, Square b) {
+        return Math.abs(b.getRank().getSymbol()-a.getRank().getSymbol());
     }
 }

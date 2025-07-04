@@ -8,16 +8,14 @@ public class TestQueen extends TestPiece {
     @BeforeEach
     @Override
     public void setUp() {
-        piece = new Queen(Piece.Color.BLACK, new Square(ORIGIN_SQUARE));
+        setPiece(new Queen(Piece.Color.BLACK));
     }
 
-    @SuppressWarnings("unused")
-    static Stream<Square> reachableSquares() {
-        return Stream.concat(TestRook.reachableSquares(), TestBishop.reachableSquares());
+    public static Stream<Square> reachable() {
+        return Stream.concat(TestRook.reachable(), TestBishop.reachable());
     }
 
-    @SuppressWarnings("unused")
-    static Stream<Square> unreachableSquares() {
-        return TestKnight.reachableSquares();
+    public static Stream<Square> unreachable() {
+        return TestKnight.reachable();
     }
 }

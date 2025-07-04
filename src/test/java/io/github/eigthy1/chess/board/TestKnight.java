@@ -4,22 +4,20 @@ import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
 
-import static io.github.eigthy1.chess.util.TestUtils.buildSquares;
+import io.github.eigthy1.chess.util.Squares;
 
 public class TestKnight extends TestPiece {
     @BeforeEach
     @Override
     public void setUp() {
-        piece = new Knight(Piece.Color.BLACK, new Square(ORIGIN_SQUARE));
+        setPiece(new Knight(Piece.Color.BLACK));
     }
 
-    @SuppressWarnings("unused")
-    static Stream<Square> reachableSquares() {
-        return buildSquares("a5 a7 b4 b8 d4 d8 e5 e7");
+    public static Stream<Square> reachable() {
+        return Squares.bulkBuild("a5 a7 b4 b8 d4 d8 e5 e7".split(" "));
     }
 
-    @SuppressWarnings("unused")
-    static Stream<Square> unreachableSquares() {
-        return TestQueen.reachableSquares();
+    public static Stream<Square> unreachable() {
+        return TestQueen.reachable();
     }
 }
