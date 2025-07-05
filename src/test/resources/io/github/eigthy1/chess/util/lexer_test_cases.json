@@ -1,0 +1,19 @@
+[
+  { "move": "e4", "lexemes": ["e4"] },
+  { "move": "d5", "lexemes": ["d5"] },
+  { "move": "Nf3", "lexemes": ["N", "f3"] },
+  { "move": "Qb7", "lexemes": ["Q", "b7"] },
+  { "move": "Nbd2", "lexemes": ["N", "b", "d2"] },
+  { "move": "R1e1", "lexemes": ["R", "1", "e1"] },
+  { "move": "exd5", "lexemes": ["e", "x", "d5"] },
+  { "move": "Nxe5", "lexemes": ["N", "x", "e5"] },
+  { "move": "e8=Q", "lexemes": ["e8", "=Q"] },
+  { "move": "Qh5+", "lexemes": ["Q", "h5", "+"] },
+  { "move": "Rd8#", "lexemes": ["R", "d8", "#"] },
+  { "move": "e4?!", "lexemes": ["e4", "?!"] },
+  { "move": "Nf3-+", "lexemes": ["N", "f3", "-+"] },
+  { "move": "O-O", "lexemes": ["O-O"] },
+  { "move": "O-O-O", "lexemes": ["O-O-O"] },
+  { "move": "exd8=Q+", "lexemes": ["e", "x", "d8", "=Q", "+"] },
+  { "move": "Nf3?!", "lexemes": ["N", "f3", "?!"] }
+]
