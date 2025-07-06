@@ -14,10 +14,10 @@ public class TestPawn extends TestPiece {
     }
 
     public static Stream<Square> reachable() {
-        return Squares.bulkBuild("c5".split(" "));
+        return Squares.bulkBuild(testSquares(Pawn.symbol().toString(), POSITIVE_TEST));
     }
 
     public static Stream<Square> unreachable() {
-        return Squares.bulkBuild("b6 c7 d6".split(" "));
+        return Squares.bulkBuild(testSquares(Pawn.symbol().toString(), NEGATIVE_TEST));
     }
 }

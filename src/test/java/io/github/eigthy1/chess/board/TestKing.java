@@ -5,8 +5,6 @@ import java.util.stream.*;
 
 import org.junit.jupiter.api.BeforeEach;
 
-import io.github.eigthy1.chess.util.Squares;
-
 public class TestKing extends TestPiece {
     @BeforeEach
     @Override
@@ -15,7 +13,7 @@ public class TestKing extends TestPiece {
     }
 
     public static Stream<Square> reachable() {
-        return Squares.bulkBuild("b5 b6 b7 c5 c7 d5 d6 d7".split(" "));
+        return TestQueen.reachable().filter(target -> Square.chebyshevDistance(new Square(ORIGIN), target) == 1);
     }
 
     public static Stream<Square> unreachable() {

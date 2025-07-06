@@ -14,7 +14,7 @@ public class TestBishop extends TestPiece {
     }
 
     public static Stream<Square> reachable() {
-        return Squares.bulkBuild("a4 a8 b5 b7 d5 d7 e4 e8 f3 g2 h1".split(" "));
+        return Squares.bulkBuild(testSquares(Bishop.symbol().toString(), POSITIVE_TEST));
     }
 
     public static Stream<Square> unreachable() {

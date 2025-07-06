@@ -14,7 +14,7 @@ public class TestRook extends TestPiece {
     }
 
     public static Stream<Square> reachable() {
-        return Squares.bulkBuild("a6 b6 c1 c2 c3 c4 c5 c7 c8 d6 e6 f6 g6 h6".split(" "));
+        return Squares.bulkBuild(testSquares(Rook.symbol().toString(), POSITIVE_TEST));
     }
 
     public static Stream<Square> unreachable() {

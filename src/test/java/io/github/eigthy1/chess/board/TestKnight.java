@@ -14,7 +14,7 @@ public class TestKnight extends TestPiece {
     }
 
     public static Stream<Square> reachable() {
-        return Squares.bulkBuild("a5 a7 b4 b8 d4 d8 e5 e7".split(" "));
+        return Squares.bulkBuild(testSquares(Knight.symbol().toString(), POSITIVE_TEST));
     }
 
     public static Stream<Square> unreachable() {
