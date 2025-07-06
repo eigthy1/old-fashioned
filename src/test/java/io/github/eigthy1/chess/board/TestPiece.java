@@ -22,7 +22,7 @@ public abstract class TestPiece {
         try {
             TEST_SQUARES = new ObjectMapper().readValue(
                 TestPiece.class.getResourceAsStream(TEST_SQUARES_FILE_PATH),
-                new TypeReference<Map<String, Map<String, List<String>>>>() {}
+                new TypeReference<>() {}
             );
         } catch(IOException e) {
             throw new RuntimeException(e);

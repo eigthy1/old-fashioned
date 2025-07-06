@@ -15,5 +15,6 @@
   { "move": "O-O", "lexemes": ["O-O"] },
   { "move": "O-O-O", "lexemes": ["O-O-O"] },
   { "move": "exd8=Q+", "lexemes": ["e", "x", "d8", "=Q", "+"] },
-  { "move": "Nf3?!", "lexemes": ["N", "f3", "?!"] }
+  { "move": "Nf3?!", "lexemes": ["N", "f3", "?!"] },
+  { "move": "Qa1h8", "lexemes": ["Q", "a", "1", "h8"] }
 ]

@@ -12,9 +12,23 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestLexer {
     public static final String TEST_CASES_FILE_PATH = "/io/github/eigthy1/chess/util/lexer_test_cases.json";
+    private static final List<Case> TEST_CASES;
 
-    static class Case {
+    static {
+        try {
+            TEST_CASES = new ObjectMapper().readValue(
+                    TestLexer.class.getResourceAsStream(TEST_CASES_FILE_PATH),
+                    new TypeReference<>() {}
+            );
+        } catch(IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static class Case {
+        @SuppressWarnings("unused")
         private String move;
+        @SuppressWarnings("unused")
         private List<String> lexemes;
 
         public String getMove() {
@@ -26,11 +40,8 @@ public class TestLexer {
         }
     }
 
-    public static List<Case> tokenization() throws IOException {
-        return new ObjectMapper().readValue(
-            TestLexer.class.getResourceAsStream(TEST_CASES_FILE_PATH),
-            new TypeReference<List<Case>>() {}
-        );
+    public static List<Case> tokenization() {
+        return TEST_CASES;
     }
     
     @ParameterizedTest
